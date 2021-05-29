@@ -5,10 +5,11 @@
 FROM python:alpine
 MAINTAINER Yann Verry <docker@verry.org>
 
-WORKDIR .
+WORKDIR /app
+COPY Pipfile Pipfile.lock main.py /app/
 
 RUN pip install --no-cache-dir pipenv && \
 	pipenv install --system --deploy
 
 USER nobody
-CMD python /routeros-restapi/main.py
+CMD python /app/main.py
