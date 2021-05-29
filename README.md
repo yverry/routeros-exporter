@@ -7,7 +7,8 @@ You need to create a user on routerOS (>7.1):
 ```
 /user group
 add name=prometheus policy=read,winbox,api,rest-api,!local,!telnet,!ssh,!ftp,!reboot,!write,!policy,!test,!password,!web,!sniff,!sensitive,!romon,!dude,!tikapp
-add group=prometheus name=prometheus
+/user
+add group=prometheus name=prometheus password=<your super secret password>
 ````
 
 You also need to `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/REST+API)
