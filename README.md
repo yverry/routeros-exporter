@@ -10,7 +10,7 @@ add name=prometheus policy=read,winbox,api,rest-api,!local,!telnet,!ssh,!ftp,!re
 add group=prometheus name=prometheus
 ````
 
-You also need to `www-ssl` (enable)[https://help.mikrotik.com/docs/display/ROS/REST+API]
+You also need to `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/REST+API)
 
 ## Docker
 
