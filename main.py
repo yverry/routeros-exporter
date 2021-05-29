@@ -1,11 +1,10 @@
 import requests as req
-import json
 
 from requests.models import Response
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from prometheus_client import start_http_server, Gauge
-import random, time, os
+import time, os
 
 def process_request(router_ip,router_username,router_password):
     url = 'https://' + router_ip + '/rest/interface'
