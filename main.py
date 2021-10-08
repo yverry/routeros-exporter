@@ -6,8 +6,8 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from prometheus_client import start_http_server, Gauge
 import time, os
 
-def process_request(router_ip,router_username,router_password):
-    url = 'https://' + router_ip + '/rest/interface'
+def mkt_restapi(router_ip,router_username,router_password, path):
+    url = 'https://' + router_ip + '/rest/' + path
     req.packages.urllib3.disable_warnings(InsecureRequestWarning)
     try:
         response = req.get(url, auth=(router_username,router_password), verify=False, timeout=5)
@@ -19,7 +19,7 @@ def process_request(router_ip,router_username,router_password):
     
     return response.json()
 
-def declare_prometheus_metrics(data,router_ip):
+def init_prometheus_interface_metrics(data,router_ip):
 
     prom = dict()
     metrics = ['fp_rx_byte','fp_tx_byte','tx_byte','rx_byte']
@@ -41,6 +41,31 @@ def prom_request(data,prom,routerip):
             prom[name].labels(routerip=routerip,interface=interface).set(value)
 
 
+def init_prometheus_cpu_metrics(data,router_ip):
+
+    prom = dict()
+
+    name = 'routeros_load'
+    prom[name] = Gauge(name,"RouterOS CPU load " + name, ['routerip','cpu'])
+    name = 'routeros_irq'
+    prom[name] = Gauge(name,"RouterOS CPU IRQ " + name, ['routerip','cpu'])
+
+    return prom
+
+def prom_cpu_request(data,prom,routerip):
+
+    for key in data:
+        name = 'routeros_load'
+        cpu = key['cpu']
+        value = key['load']
+        prom[name].labels(routerip=routerip,cpu=cpu).set(value)
+
+        name = 'routeros_irq'
+        cpu = key['cpu']
+        value = key['irq']
+        prom[name].labels(routerip=routerip,cpu=cpu).set(value)
+
+
 if __name__ == '__main__':
 
 
@@ -49,14 +74,26 @@ if __name__ == '__main__':
     router_password = os.environ['ROUTER_PASSWORD']
 
     # Start up the server to expose the metrics.
-    start_http_server(8000)
+    port = 8000
+    start_http_server(port)
+    print("Running RouterOS exporter on port " + str(port))
 
-    # init metrics
-    data = process_request(router_ip,router_username,router_password)
-    prom = declare_prometheus_metrics(data,router_ip)
+    # interface metrics
+    data_interface = mkt_restapi(router_ip,router_username,router_password,'interface')
+    prom_interface = init_prometheus_interface_metrics(data_interface,router_ip)
+
+    # system/resource/cpu metrics
+    data_cpu = mkt_restapi(router_ip,router_username,router_password,'system/resource/cpu')
+    prom_cpu = init_prometheus_cpu_metrics(data_cpu,router_ip)
+
 
     # Generate requests.
     while True:
-        data = process_request(router_ip,router_username,router_password)
-        prom_request(data,prom,router_ip)
+        # interface
+        data_interface = mkt_restapi(router_ip,router_username,router_password,'interface')
+        prom_request(data_interface,prom_interface,router_ip)
+        # system/resource/cpu
+        data_cpu = mkt_restapi(router_ip,router_username,router_password,'system/resource/cpu')
+        prom_cpu_request(data_cpu,prom_cpu,router_ip)
+
         time.sleep(3)

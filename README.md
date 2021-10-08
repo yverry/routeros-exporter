@@ -16,7 +16,7 @@ You also need to `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/R
 ## Docker
 
 ```
-routerosapi:
+routeros-exporter:
     image: python-routeros
     restart: always
     environment:
