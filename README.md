@@ -1,5 +1,7 @@
 # RouterOS Prometheus Exporter
 
+
+
 ## Setup
 
 You need to create a user on routerOS (>7.1):
@@ -24,3 +26,12 @@ routeros-exporter:
         - ROUTER_USERNAME=<your prometheus username>
         - ROUTER_PASSWORD=<your super secret password>
 ```
+### build
+
+simply use `make build`
+
+## Metrics
+
+Today thoose metrics was fetched by this exporter:
+* interfaces
+* cpu (load/irq)
