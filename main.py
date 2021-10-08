@@ -69,14 +69,29 @@ def prom_cpu_request(data,prom,routerip):
 if __name__ == '__main__':
 
 
-    router_ip = os.environ['ROUTER_IP']
-    router_username = os.environ['ROUTER_USERNAME']
-    router_password = os.environ['ROUTER_PASSWORD']
+    try:
+        router_ip = os.environ['ROUTER_IP']
+        router_username = os.environ['ROUTER_USERNAME']
+        router_password = os.environ['ROUTER_PASSWORD']
+    except KeyError as e:
+        print("Fatal Error missing: " + str(e) + " variable, exiting")
+        os._exit(-1)
+
+    # PORT
+    try:
+        exporter_port = os.environ['PORT']
+    except KeyError:
+        exporter_port = 8000
+
+    # Interval
+    try:
+        interval = os.environ['INTERVAL']
+    except KeyError:
+        interval = 30
 
     # Start up the server to expose the metrics.
-    port = 8000
-    start_http_server(port)
-    print("Running RouterOS exporter on port " + str(port))
+    start_http_server(exporter_port)
+    print("Running RouterOS exporter on port " + str(exporter_port) + " fetch interval is " + str(interval) + "s")
 
     # interface metrics
     data_interface = mkt_restapi(router_ip,router_username,router_password,'interface')
@@ -96,4 +111,4 @@ if __name__ == '__main__':
         data_cpu = mkt_restapi(router_ip,router_username,router_password,'system/resource/cpu')
         prom_cpu_request(data_cpu,prom_cpu,router_ip)
 
-        time.sleep(3)
+        time.sleep(interval)
