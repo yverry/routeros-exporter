@@ -17,9 +17,17 @@ You also need `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/REST
 
 ## Docker
 
+On docker hub:
+
+```
+docker pull yverry/routeros-exporter
+```
+
+docker-compose:
+
 ```
 routeros-exporter:
-    image: python-routeros
+    image: yverry/routeros-exporter
     restart: always
     environment:
         - ROUTER_IP=<your ROUTERIP>
