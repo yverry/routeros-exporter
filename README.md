@@ -13,7 +13,7 @@ add name=prometheus policy=api,rest-api,!local,!telnet,!ssh,!ftp,!reboot,!write,
 add group=prometheus name=prometheus password=<your super secret password>
 ````
 
-You also need to `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/REST+API)
+You also need `www-ssl` [enable](https://help.mikrotik.com/docs/display/ROS/REST+API)
 
 ## Docker
 
@@ -34,4 +34,9 @@ simply use `make build`
 
 Today thoose metrics was fetched by this exporter:
 * interfaces
-* cpu (load/irq)
+  * tx
+  * rx
+  * fastTrack 
+* cpu 
+  * load
+  * irq
